@@ -89,7 +89,7 @@ Pushing a tag that starts with `v` builds the app on GitHub Actions and publishe
 git tag v0.1.0 && git push origin v0.1.0
 ```
 
-The tag (without the `v`) becomes the bundle version.
+The tag (without the `v`) becomes the bundle version. The workflow can also be started by hand from the Actions tab; that run only builds and uploads the zip as a workflow artifact, without creating a release.
 
 ## Development
 
