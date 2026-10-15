@@ -13,4 +13,5 @@ if [[ "$(xcode-select -p)" == *CommandLineTools* ]]; then
            -Xswiftc -Xfrontend -Xswiftc -disable-cross-import-overlays)
 fi
 
-exec swift test "${FLAGS[@]}" "$@"
+# ${FLAGS[@]+...}: bash 3.2 (macOS) treats an empty array as unset under `set -u`.
+exec swift test ${FLAGS[@]+"${FLAGS[@]}"} "$@"
