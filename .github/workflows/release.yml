@@ -19,13 +19,14 @@ jobs:
 
       - name: Package
         run: |
+          NAME="ClaudeStatus-${GITHUB_REF_NAME//\//-}"   # branch names may contain "/"
           cd build
-          ditto -c -k --keepParent ClaudeStatus.app "ClaudeStatus-${GITHUB_REF_NAME}.zip"
-          shasum -a 256 "ClaudeStatus-${GITHUB_REF_NAME}.zip" > "ClaudeStatus-${GITHUB_REF_NAME}.zip.sha256"
+          ditto -c -k --keepParent ClaudeStatus.app "$NAME.zip"
+          shasum -a 256 "$NAME.zip" > "$NAME.zip.sha256"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ClaudeStatus-${{ github.ref_name }}
+          name: build
           path: build/ClaudeStatus-*.zip*
 
       - name: Publish release
