@@ -1,0 +1,86 @@
+# Claude Status
+
+A small macOS menu bar app that watches your Claude subscription limits and tells you before you run into them.
+
+```
+◐ 5h 82%  den 64%
+```
+
+- **5-hour session limit** – a notification when you get close and when you hit it, plus the time it resets.
+- **Weekly limit as a daily budget** – the weekly allowance is spread over workdays (Mon–Fri), so it lasts until the weekly reset. You are warned when today's budget is nearly used and when it is exceeded.
+- **Menu bar label** – `5h` is the session limit, `den` is today's usage divided by today's budget (it can go above 100 %).
+- **Dropdown panel** – progress bars and local reset times for every limit, including per-model weekly caps and paid overage.
+
+The UI and notifications are in Czech. There is no Dock icon (`LSUIElement`).
+
+> **Unofficial.** This app reads an undocumented endpoint that Claude Code itself uses for `/usage`. It can change or break without notice. It is not affiliated with or endorsed by Anthropic.
+
+## Requirements
+
+- macOS 14 or newer
+- Swift 6.2 toolchain (Command Line Tools are enough, Xcode is not needed)
+- Claude Code installed and signed in. The app reuses its login from the Keychain.
+
+## Install
+
+```sh
+git clone git@github.com:mr-jablon/claude-status.git
+cd claude-status
+scripts/bundle.sh --install
+```
+
+This builds a release binary, wraps it in `ClaudeStatus.app`, ad-hoc signs it, copies it to `~/Applications` and launches it. Without `--install` the bundle is left in `build/ClaudeStatus.app`.
+
+Install to `~/Applications` (or `/Applications`), not to a location on an external or encrypted volume. The app registers itself as a login item only from those two folders, and a login item pointing at an unmounted volume fails.
+
+Notifications need a real app bundle, which is why `swift run` alone is not enough for normal use.
+
+## Usage
+
+```sh
+swift run ClaudeStatus --dump     # one live fetch printed to stdout; saves nothing, sends no notifications
+```
+
+Settings live inside the dropdown panel.
+
+Watch the app log:
+
+```sh
+log stream --info --predicate 'subsystem == "local.ClaudeStatus"'
+```
+
+## How it works
+
+**Token.** The OAuth token is read from the Keychain item `Claude Code-credentials` by running `/usr/bin/security find-generic-password`. Access is strictly read-only: the app never refreshes the token and never writes the item, because Claude Code rotates it itself. If the token has expired, the app asks you to open Claude Code.
+
+**Polling.** The endpoint is `GET https://api.anthropic.com/api/oauth/usage`, called at most once per 60 seconds, with back-off on errors and HTTP 429.
+
+**Daily budget.** The API has no daily limit, so it is derived:
+
+```
+todayBudget = (100 − B) × w(today) / Σ w(d)     # d from today to the reset day
+todayUsed   = weekly percent − B
+```
+
+`B` is the weekly percent at the first poll of the local day. `w(day)` is the part of a workday inside the current weekly window, divided by that day's real length, so DST days are handled. Saturday and Sunday weigh 0. Unused budget rolls over to later days, and overspending shrinks them. Public holidays count as workdays.
+
+**Architecture.** There are two SwiftPM targets:
+
+- `ClaudeStatusCore` – a Foundation-only library with all logic. Every decision goes through one pure function, `Engine.step`, and side effects go through injected ports.
+- `ClaudeStatus` – the SwiftUI executable plus the platform adapters (Keychain via `security`, URLSession, UserNotifications, login item).
+
+More detail is in [`docs/design.md`](docs/design.md) and [`docs/requirements.md`](docs/requirements.md) (both in Czech).
+
+## Development
+
+```sh
+swift build                                  # debug build
+scripts/test.sh                              # all tests (Swift Testing)
+scripts/test.sh --filter EngineTests         # one suite or test
+```
+
+Run tests through `scripts/test.sh`, not plain `swift test`. With only the Command Line Tools installed, the script supplies the flags SwiftPM needs to find `Testing.framework`.
+
+## Privacy
+
+The app talks only to `api.anthropic.com`. The token stays in memory and is never written to disk or logged. Persisted state is limited to usage baselines and notification dedupe keys in `UserDefaults`.

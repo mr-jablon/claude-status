@@ -1,0 +1,93 @@
+{
+  "five_hour": {
+    "utilization": 4.0,
+    "resets_at": "2026-10-15T15:20:00.418548+00:00",
+    "limit_dollars": null,
+    "used_dollars": null,
+    "remaining_dollars": null,
+    "locked_reason": null
+  },
+  "seven_day": {
+    "utilization": 29.0,
+    "resets_at": "2026-10-20T20:00:00.418563+00:00",
+    "limit_dollars": null,
+    "used_dollars": null,
+    "remaining_dollars": null,
+    "locked_reason": null
+  },
+  "seven_day_oauth_apps": null,
+  "seven_day_opus": null,
+  "seven_day_sonnet": null,
+  "seven_day_cowork": null,
+  "seven_day_omelette": null,
+  "tangelo": null,
+  "iguana_necktie": {
+    "utilization": 100.0,
+    "resets_at": "2026-11-05T07:59:00+00:00",
+    "limit_dollars": 250,
+    "used_dollars": 250.033533,
+    "remaining_dollars": 0.0,
+    "locked_reason": null
+  },
+  "omelette_promotional": null,
+  "nimbus_quill": null,
+  "cinder_cove": null,
+  "copper_kite": null,
+  "brass_thimble": null,
+  "harbor_lantern": null,
+  "wattle_ember": null,
+  "amber_ladder": null,
+  "granite_teacup": null,
+  "amber_cistern": null,
+  "juniper_tide": null,
+  "cedar_ember": null,
+  "amber_gauge": null,
+  "extra_usage": {
+    "is_enabled": true,
+    "monthly_limit": 500,
+    "used_credits": 235.0,
+    "utilization": 47.0,
+    "currency": "EUR",
+    "decimal_places": 2,
+    "disabled_reason": null,
+    "user_disabled": false,
+    "spend_limit_reached": false,
+    "credits_ever_enabled": true,
+    "daily": null,
+    "weekly": null
+  },
+  "member_dashboard_available": false,
+  "seven_day_breakdown": {
+    "as_of": "2026-10-15T10:32:02.807468+00:00",
+    "window_started_at": "2026-10-13T20:00:00.418563+00:00",
+    "rows": [
+      {
+        "key": "claude_code",
+        "display_name": "Claude Code",
+        "percent": 98
+      },
+      {
+        "key": "chat",
+        "display_name": "Chats",
+        "percent": 0
+      },
+      {
+        "key": "cowork",
+        "display_name": "Cowork",
+        "percent": 2
+      },
+      {
+        "key": "other",
+        "display_name": "Other",
+        "percent": 0
+      }
+    ]
+  },
+  "weekly_scoped_shares": [
+    {
+      "limit_index": 2,
+      "used_percent_of_weekly": 0,
+      "allowance_percent_of_weekly": 50
+    }
+  ]
+}
